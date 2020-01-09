@@ -1,0 +1,2 @@
+# Registration-Form
+  It is a simple basic registration form in ReactJs . In this form there is there file. First is main file App.js , where you import your Requirement module example as form.js file and second file contain box ,radio button ,checkbox and using model with react . and the last file contain few css code for designing . stored the form data into a table and access to update and delete that data .
