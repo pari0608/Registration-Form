@@ -1,0 +1,39 @@
+.border { 
+    border-radius: 35px; 
+    border-style:solid; 
+    background: #76a376; 
+    padding: 30px;  
+    text-align:left; 
+    width: 250px; 
+    height: 300px;  
+} 
+.btn {
+     background-color: #008CBA; 
+    float: center;
+    color:rgba(250, 248, 248, 0.863); 
+}
+.modal{
+     border-radius: 35px;  
+    border-style:solid; 
+    background: #6e8594; 
+    padding: 50px;  
+    text-align:left; 
+    width: 200px; 
+    height: 200px;
+}
+.btn-add{
+    background-color: rgb(235, 17, 17); 
+    float: left;
+    color:rgba(250, 248, 248, 0.863); 
+}
+.btn-close{
+    background-color: rgb(17, 235, 82); 
+    float: right;
+    color:rgba(250, 248, 248, 0.863); 
+}
+.table-data{
+    border: 2px solid black;
+    border-collapse: collapse;
+    width: 500px;
+    height: 200px; 
+}

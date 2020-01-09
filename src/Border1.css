@@ -1,0 +1,50 @@
+
+
+*{box-sizing: border-box;}
+
+.border {width: 50%;float: left;padding: 15px;border: 1px solid red;  }
+ 
+.main {width: 50%;float: right;padding: 15px;margin: 10px; }
+
+
+
+
+
+ .border {
+    border-radius: 35px;    
+    border-style:solid;
+    background: #dd9105;
+    margin: 10px;   
+    text-align:left; 
+    width: 250px; 
+    height: 550px;  
+   
+} 
+.btn {
+     background-color: #008CBA; 
+    float: center;
+    color:rgba(250, 248, 248, 0.863); 
+}
+.modal{
+     border-radius: 35px;  
+    border-style:solid; 
+    background: #2284c5; 
+    padding: 50px;  
+    text-align:left; 
+    width: 200px; 
+    height: 200px;
+}
+.btn-add{
+    background-color: rgb(18, 235, 90); 
+    float: left;
+}
+.btn-close{
+    background-color: rgb(235, 17, 28); 
+    float: right;
+}
+.btn-update{
+    background-color: rgb(96, 25, 228); 
+    float: left;
+}
+
+.tss{ float: left;padding: 15px;border: 1px  ; background-color: rgb(17, 210, 235); };  
