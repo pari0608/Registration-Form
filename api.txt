@@ -1,0 +1,5 @@
+http://125.17.101.171/CCCAPI_User/webresources/LeadCustomFields? URL Parameters: {"localleadid":"195568"}
+
+
+
+http://125.17.101.171/CCCAPI_User/webresources/LeadCustomFieldsData?  {"panel_leadid":"195568","phoneid":"10062","mode":1}
