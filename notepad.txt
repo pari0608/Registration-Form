@@ -1,0 +1,379 @@
+  registerApplication(){
+    this.applicationsService.registerApplication(JSON.stringify(this.applicationForm.value),this.applicationForm.value["name"])
+    .then(res=>{
+      if(res){
+        if(res.status == 400){
+          this.errorMessage = res.response["error"]["message"];
+          this.gotoTop();
+        }
+      }
+
+    });
+  }
+---------------------------------------------------- 
+
+
+public registerApplication(applicationInfo: Object, name: any) {
+              const url = this.baseURL + "/apps-manager/apps";
+              return Coco.api(
+                {
+                  "url": url,
+                  "method": "POST",
+                  "data": applicationInfo,
+                  "headers": {
+                    'Content-Type': 'application/json; charset=utf-8'
+                  },
+                }).then(
+                  data => {
+                    console.log('Success - Create Application', data);
+                    this.messageSubject.next(name + " Has Been Successfully Added!");
+                    this.router.navigate(['/', 'applications']);
+                  },
+                  error => {
+                    console.log('Error - Create Application', error.response["error"]["reason"]);
+                    return error;
+                  });
+                }
+
+export class NetworkService {
+  private baseURL: string = environment.COCO_API_URL;
+
+  constructor(private router: Router, private spinnerService: SpinnerService) {
+    this.baseURL = environment.COCO_API_URL;
+  } 
+
+
+public installProduct(networkId, productId):any {
+    this.spinnerService.setSpinner(true);
+    const url = this.baseURL + "/network-manager/networks/" + networkId +"/grove-devices";
+    var params ={
+      "productId": productId
+    };
+
+    var accessToken = localStorage.getItem('accessToken');
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+
+      xhr.onreadystatechange = function (event) {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 400) {
+            return resolve(xhr);
+          } else {
+            return reject(xhr);
+          }
+        }
+      }
+      xhr.open('POST', url, true)
+      xhr.setRequestHeader('Content-Type', 'Application/json')
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+      xhr.withCredentials = true
+      // Send the request with stringified data
+      xhr.send(JSON.stringify(params));
+    });
+    }
+  public resetUserNetworks(networkId):any {
+    this.spinnerService.setSpinner(true);
+    const url = this.baseURL + "/network-manager/networks/" + networkId + "/reset";
+    var accessToken = localStorage.getItem('accessToken');
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+
+      xhr.onreadystatechange = function (event) {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 400) {
+            return resolve(xhr);
+          } else {
+            return reject(xhr);
+          }
+        }
+      }
+      xhr.open('POST', url, true)
+      xhr.setRequestHeader('Content-Type', 'Application/json')
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+      xhr.withCredentials = true
+      // Send the request with stringified data
+      xhr.send();
+    });
+    }
+    public reboot(networkId, deviceNodeId):any {
+      this.spinnerService.setSpinner(true);
+      const url= this.baseURL+"/network-manager/networks/"+networkId+"/devices/"+deviceNodeId+"/reboot"
+      var accessToken = localStorage.getItem('accessToken');
+
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+
+        xhr.onreadystatechange = function (event) {
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 400) {
+              return resolve(xhr);
+            } else {
+              return reject(xhr);
+            }
+          }
+        }
+        xhr.open('POST', url, true)
+        xhr.setRequestHeader('Content-Type', 'Application/json')
+        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+        xhr.withCredentials = true
+        // Send the request with stringified data
+        xhr.send();
+      });
+      }
+
+      public inviteUser(networkId, emailId):any {
+        this.spinnerService.setSpinner(true);
+        const url = this.baseURL + "/network-manager/networks/" + networkId +"/users/";
+        var accessToken = localStorage.getItem('accessToken');
+        var params = {
+          'email': emailId,
+          'role': 1,
+        };
+
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest()
+
+          xhr.onreadystatechange = function (event) {
+            if (xhr.readyState === 4) {
+              if (xhr.status >= 200 && xhr.status < 400) {
+                return resolve(xhr);
+              } else {
+                return reject(xhr);
+              }
+            }
+          }
+          xhr.open('POST', url, true)
+          xhr.setRequestHeader('Content-Type', 'Application/json')
+          xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+          xhr.withCredentials = true
+          // Send the request with stringified data
+          xhr.send(JSON.stringify(params));
+        });
+        }
+
+
+ public installProduct(networkId, productId):any {
+    this.spinnerService.setSpinner(true);
+    const url = this.baseURL + "/network-manager/networks/" + networkId +"/grove-devices";
+    var params ={
+      "productId": productId
+    };
+
+    var accessToken = localStorage.getItem('accessToken');
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+
+      xhr.onreadystatechange = function (event) {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 400) {
+            return resolve(xhr);
+          } else {
+            return reject(xhr);
+          }
+        }
+      }
+      xhr.open('POST', url, true)
+      xhr.setRequestHeader('Content-Type', 'Application/json')
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+      xhr.withCredentials = true
+      // Send the request with stringified data
+      xhr.send(JSON.stringify(params));
+    });
+    }
+  public resetUserNetworks(networkId):any {
+    this.spinnerService.setSpinner(true);
+    const url = this.baseURL + "/network-manager/networks/" + networkId + "/reset";
+    var accessToken = localStorage.getItem('accessToken');
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+
+      xhr.onreadystatechange = function (event) {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 400) {
+            return resolve(xhr);
+          } else {
+            return reject(xhr);
+          }
+        }
+      }
+      xhr.open('POST', url, true)
+      xhr.setRequestHeader('Content-Type', 'Application/json')
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+      xhr.withCredentials = true
+      // Send the request with stringified data
+      xhr.send();
+    });
+    }
+    public reboot(networkId, deviceNodeId):any {
+      this.spinnerService.setSpinner(true);
+      const url= this.baseURL+"/network-manager/networks/"+networkId+"/devices/"+deviceNodeId+"/reboot"
+      var accessToken = localStorage.getItem('accessToken');
+
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+
+        xhr.onreadystatechange = function (event) {
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 400) {
+              return resolve(xhr);
+            } else {
+              return reject(xhr);
+            }
+          }
+        }
+        xhr.open('POST', url, true)
+        xhr.setRequestHeader('Content-Type', 'Application/json')
+        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+        xhr.withCredentials = true
+        // Send the request with stringified data
+        xhr.send();
+      });
+      }
+
+      public inviteUser(networkId, emailId):any {
+        this.spinnerService.setSpinner(true);
+        const url = this.baseURL + "/network-manager/networks/" + networkId +"/users/";
+        var accessToken = localStorage.getItem('accessToken');
+        var params = {
+          'email': emailId,
+          'role': 1,
+        };
+
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest()
+
+          xhr.onreadystatechange = function (event) {
+            if (xhr.readyState === 4) {
+              if (xhr.status >= 200 && xhr.status < 400) {
+                return resolve(xhr);
+              } else {
+                return reject(xhr);
+              }
+            }
+          }
+          xhr.open('POST', url, true)
+          xhr.setRequestHeader('Content-Type', 'Application/json')
+          xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+          xhr.withCredentials = true
+          // Send the request with stringified data
+          xhr.send(JSON.stringify(params));
+        });
+        }
+
+    public getLatestFirmwareVersion(networkId, deviceNodeId, version):any {
+            this.spinnerService.setSpinner(true);
+            const url = this.baseURL + "/network-manager/networks/" + networkId +"/devices/"+deviceNodeId+"/firmware-updates";
+            var params ={
+              "currentVersion": version
+            };
+
+            var accessToken = localStorage.getItem('accessToken');
+            return new Promise((resolve, reject) => {
+              const xhr = new XMLHttpRequest()
+
+              xhr.onreadystatechange = function (event) {
+                if (xhr.readyState === 4) {
+                  if (xhr.status >= 200 && xhr.status < 400) {
+                    return resolve(xhr);
+                  } else {
+                    return reject(xhr);
+                  }
+                }
+              }
+              xhr.open('POST', url, true)
+              xhr.setRequestHeader('Content-Type', 'Application/json')
+              xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+              xhr.withCredentials = true
+              // Send the request with stringified data
+              xhr.send(JSON.stringify(params));
+            });
+            }
+
+  public installApplication(networkId, appId):any {
+                this.spinnerService.setSpinner(true);
+                const url = this.baseURL + "/network-manager/networks/" + networkId +"/grove-apps";
+                var params ={
+                  "appId": appId
+                };
+
+                var accessToken = localStorage.getItem('accessToken');
+                return new Promise((resolve, reject) => {
+                  const xhr = new XMLHttpRequest()
+
+                  xhr.onreadystatechange = function (event) {
+                    if (xhr.readyState === 4) {
+                      if (xhr.status >= 200 && xhr.status < 400) {
+                        return resolve(xhr);
+                      } else {
+                        return reject(xhr);
+                      }
+                    }
+                  }
+                  xhr.open('POST', url, true)
+                  xhr.setRequestHeader('Content-Type', 'Application/json')
+                  xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+                  xhr.withCredentials = true
+                  // Send the request with stringified data
+                  xhr.send(JSON.stringify(params));
+                });
+                }
+
+                public changeUserRole(networkId, userId, role):any {
+                  this.spinnerService.setSpinner(true);
+                  const url = this.baseURL + "/network-manager/networks/" + networkId +"/users/"+userId+"/update-role";
+                  var params ={
+                    "role": role
+                  };
+
+                  var accessToken = localStorage.getItem('accessToken');
+                  return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+
+                    xhr.onreadystatechange = function (event) {
+                      if (xhr.readyState === 4) {
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                          return resolve(xhr);
+                        } else {
+                          return reject(xhr);
+                        }
+                      }
+                    }
+                    xhr.open('POST', url, true)
+                    xhr.setRequestHeader('Content-Type', 'Application/json')
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+                    xhr.withCredentials = true
+                    // Send the request with stringified data
+                    xhr.send(JSON.stringify(params));
+                  });
+                  }
+
+   public updateDeviceFirmware(networkId, gatewayNodeId, firmwareVersion):any {
+                      this.spinnerService.setSpinner(true);
+                      const url = this.baseURL + "/network-manager/networks/" + networkId +"/gateways/"+gatewayNodeId+"/update-firmware";
+                      var params ={
+                        "version": firmwareVersion
+                      };
+
+                      var accessToken = localStorage.getItem('accessToken');
+                      return new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest()
+
+                        xhr.onreadystatechange = function (event) {
+                          if (xhr.readyState === 4) {
+                            if (xhr.status >= 200 && xhr.status < 400) {
+                              return resolve(xhr);
+                            } else {
+                              return reject(xhr);
+                            }
+                          }
+                        }
+                        xhr.open('POST', url, true)
+                        xhr.setRequestHeader('Content-Type', 'Application/json')
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
+                        xhr.withCredentials = true
+                        // Send the request with stringified data
+                        xhr.send(JSON.stringify(params));
+                      });
+                      }
