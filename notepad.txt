@@ -10,6 +10,7 @@
 
     });
   }
+  https://stackoverflow.com/questions/47180634/i-get-http-failure-response-for-unknown-url-0-unknown-error-instead-of-actu
 ---------------------------------------------------- 
 
 
