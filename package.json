@@ -16,7 +16,7 @@
     "react-simple-img": "^2.1.5",
     "react-tap-event-plugin": "^3.0.3",
     "react-validation": "^3.0.7",
-    "validator": "^10.11.0"
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "react-scripts start",
