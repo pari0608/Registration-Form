@@ -1,0 +1,495 @@
+import React, { useState, useEffect } from "react";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import './submitidea.css'; //form css code
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Select from "react-select";
+import Typography from '@mui/material/Typography';
+import Autocomplete from '@mui/material/Autocomplete';
+import { useNavigate } from "react-router-dom";
+import { apiService } from "./../api-service";
+import { getEventById, getUserList, createIdea } from "./../query-service";
+import { useLocation } from 'react-router-dom';
+
+const submitideadata = {
+  ideaTitle: '',
+  eventId: '',
+  eventType: '',
+  themeName: '',
+  categoryName: '',
+  subCategoryName: '',
+  currentSituation: '',
+  solutionProvided: '',
+  descriptionText: '',
+  solutionUrl: '',
+  implementationStatus: '',
+  ideaPrivacy: '',
+  benefits: '',
+  participants: [],
+  supportDocuments: []
+}
+export default function Submitidea() {
+  const [loading, setLoading] = useState(false);
+  const Token = JSON.parse(localStorage.getItem("userdetails")).token;
+  const location = useLocation();
+  const getEventId = location.state;
+  const [eventDetails, setEventDetails] = useState([]);
+  const [values, setValues] = useState(submitideadata);
+  const [getTheme, setTheme] = React.useState('');
+  const [getCategory, setCategory] = React.useState('');
+  const [getSubCategory, setSubCategory] = React.useState('');
+  const [categoryList, setcategoryList] = React.useState('');
+  const [subCategoryList, setSubCategoryList] = React.useState('');
+  const [select, setSelect] = useState("");
+  const [urlvalue, setUrlvalue] = useState([]);
+  const [uploadStatus, setuploadStatus] = useState(true);
+  const privacyOptions = [
+    { value: 'account', label: 'Admin can only view' },
+    { value: 'admin-eventlead-jury', label: 'Event Lead/Jury can only view' },
+    { value: 'all', label: 'Eveyone can view' }
+  ];
+  const implementationStatusDetails = [
+    { value: 'yet-to-begin' },
+    { value: 'admin-eventlead-jury' },
+    { value: 'all' }
+  ]
+  const [privacy, setPrivacy] = React.useState('');
+  const [evenleadlist, setEventLeadList] = useState([]);
+  const [eventUserlist, setEventUserlist] = useState([]);
+  const [searchString, setSearchString] = useState("");
+  const [errors, setErrors] = useState({});
+  const [countUserCall, setcountUserCall] = useState("");
+  const navigate = useNavigate();
+
+  const getEventByEventId = async (e) => {
+    apiService({
+      body: {
+        query: getEventById(getEventId)
+      }
+    })
+      .then((data) => {
+        setEventDetails(data.data.getEvent);
+        setLoading(true);
+        setcountUserCall(false);
+        console.log(implementationStatusDetails[0].value)
+        setValues({
+          ...values,
+          ["eventType"]: data.data.getEvent.type,
+          ["eventId"]: getEventId,
+          ["implementationStatus"]: implementationStatusDetails[0].value,
+          ["supportDocuments"]: ['']
+
+        });
+      });
+  };
+  useEffect(() => {
+    getEventByEventId();
+  }, [getEventId]);
+
+  useEffect(async () => {
+    apiService({
+      body: {
+        query: getUserList(),
+        variables: { searchString }
+      }
+    })
+      .then((data) => {
+        setEventLeadList(data.data.getUserList);
+        setEventUserlist(data.data.getUserList)
+      });
+    ;
+  }, [searchString]);
+
+  const handleThemeChange = (obj) => {
+    setTheme(obj);
+    setcategoryList(obj.categories);
+    setCategory(null);
+    setSubCategory(null);
+    setSubCategoryList("");
+    setValues({
+      ...values,
+      ["themeName"]: obj.themeName
+    });
+  };
+  const handleCategoryChange = (obj) => {
+    setCategory(obj);
+    setValues({
+      ...values,
+      ["categoryName"]: obj.categoryName
+    });
+    setSubCategoryList(obj.subCategories);
+    setSubCategory(null);
+  };
+  const handleSubCategoryChange = (obj) => {
+    setSubCategory(obj);
+    setValues({
+      ...values,
+      ["subCategoryName"]: obj.subCategoryName
+    });
+  };
+  const handlePrivacyhange = (obj) => {
+    setPrivacy(obj);
+    setValues({
+      ...values,
+      ["ideaPrivacy"]: obj.value
+    });
+  };
+  const handleLeadName = (e) => {
+    if (evenleadlist.length !== 0) {
+      setSearchString(e.target.value);
+    } else if (evenleadlist.length === 0 && eventUserlist.length === 0) {
+      setSearchString("");
+    }
+  };
+  const onInputUserChange = (event, UserValue, reason) => {
+    console.log("here 10", UserValue)
+    setValues({
+      ...values,
+      ["participants"]: UserValue.map((event, id) => (event.id))
+    });
+    if (UserValue.length >= eventDetails.maxParticipants) {
+      setEventLeadList([]);
+    } else {
+      if (evenleadlist.length === 0 && eventUserlist.length !== 0) {
+        setEventLeadList(eventUserlist);
+        setSearchString("");
+      }
+    }
+  };
+  const handleInputChange = e => {
+    const { name, value } = e.target
+    setValues({
+      ...values,
+      [name]: value
+    })
+  }
+  const resetForm = () => {
+    setValues(submitideadata);
+    setErrors({})
+  }
+
+  const changehandle = (e) => {
+    const selectedimg = e.target.files[0];
+    console.log(selectedimg.size);
+    if (selectedimg.size < 1e6) {
+      setuploadStatus(false);
+      setSelect(e.target.files[0]);
+    } else {
+      window.alert("Please upload a file smaller than 1 MB");
+      setuploadStatus(true);
+      return;
+    }
+  };
+
+  const handleUpload = (e) => {
+    const formData = new FormData();
+    formData.append("file", select);
+    fetch("https://ipbe.enquero-trg.com/api/attachment", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + Token,
+      },
+      body: formData,
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setSelect("");
+        setuploadStatus(true);
+        if (urlvalue.length === 0) {
+          setValues({
+            ...values,
+            ["supportDocuments"]: [data.file.url]
+          });
+        } else {
+          let uploadUrlValue = values.supportDocuments.map((urls) => (urls))
+          uploadUrlValue = uploadUrlValue.concat(data.file.url)
+          setValues({
+            ...values,
+            ["supportDocuments"]: uploadUrlValue
+          });
+        }
+        setUrlvalue((prev) => {
+          return [...prev, data.file.url];
+        });
+      });
+  };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    console.log(values);
+    apiService({
+      body: {
+        query: createIdea(),
+        variables: { idea: values }
+      }
+    })
+      // .then((data) => {
+      //   alert('hi');
+      //   console.log(data);
+      //   console.log(`Error Message : ${JSON.stringify(data.errors[0])}`);
+      //   // navigate("/ideahome",{state:getEventId});
+      // })
+
+      .then((data) => {
+        if (data.ideaTitle === "" ) {
+          alert('1')
+          // console.log(data);
+          // console.log(`Error Message : ${JSON.stringify(data.errors[0])}`);
+        }
+        else {
+          if (data.ideaTitle !== "" )
+           {
+            alert('2');
+            // console.log(data);
+            // navigate("/ideahome", { state: getEventId });
+          }
+        }
+      }).catch((error) => {
+        console.log(error);
+      })
+      ;
+  }
+
+  return (
+    <>
+      {loading && (
+
+        <form className="formstyle" onSubmit={handleSubmit}>
+
+          <Box sx={{ width: '100%' }} className="submitIdea">
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} paddingLeft={5} paddingRight={5}>
+              <Grid item xs={4}>
+                <Typography variant="h5" color={"#017A8E"}>
+                  Submit Idea
+          </Typography>
+              </Grid>
+              <Grid item xs={4}>
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="h5" align="right" color={"#017A8E"}>
+                  {eventDetails.name}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <label className="label">Idea Title</label>
+                <TextField
+                  id="outlined-basic" variant="outlined"
+                  name="ideaTitle"
+                  value={values.ideaTitle}
+                  onChange={handleInputChange}
+                  error={errors.ideaTitle}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <label>Theme</label>
+                <Select
+                  placeholder="Select Theme"
+                  name="themeName"
+                  value={getTheme}
+                  options={eventDetails.themes}
+                  onChange={handleThemeChange}
+                  getOptionLabel={themeDetails => themeDetails.themeName}
+                  getOptionValue={themeDetails => themeDetails.themeName}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <label>Category</label>
+                <Select
+                  placeholder="Select Category"
+                  name="categoryName"
+                  className="categoryDropdown"
+                  value={getCategory}
+                  options={categoryList}
+                  onChange={handleCategoryChange}
+                  isDisabled={categoryList.length === 0 ? true : false}
+                  getOptionLabel={categoriesDetails => categoriesDetails.categoryName}
+                  getOptionValue={categoriesDetails => categoriesDetails.categoryName}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <label>Sub Category</label>
+                <Select
+                  placeholder="Select Sub Category"
+                  name="subCategoryName"
+                  className="subCategoryDropdown"
+                  value={getSubCategory}
+                  options={subCategoryList}
+                  onChange={handleSubCategoryChange}
+                  isDisabled={subCategoryList.length === 0 ? true : false}
+                  getOptionLabel={subCategoriesDetails => subCategoriesDetails.subCategoryName}
+                  getOptionValue={subCategoriesDetails => subCategoriesDetails.subCategoryName}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <label>Current Situation</label>
+                <TextField className="textfield"
+                  id="outlined-basic" variant="outlined"
+                  multiline
+                  minRows={4}
+                  maxRows={Infinity}
+                  name="currentSituation"
+                  value={values.currentSituation}
+                  onChange={handleInputChange}
+                  error={errors.currentSituation}
+                />
+
+              </Grid>
+              <Grid item xs={12}>
+                <label>Solution Provided</label>
+                <TextField
+                  id="outlined-basic" variant="outlined"
+                  name="solutionProvided"
+                  value={values.solutionProvided}
+                  onChange={handleInputChange}
+                  error={errors.solutionProvided}
+                  inputProps={{ maxLength: 200 }}
+
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <label>Benifits</label>
+                <TextField
+                  id="outlined-basic" variant="outlined"
+                  name="benefits"
+                  multiline
+                  minRows={6}
+                  maxRows={Infinity}
+                  value={values.benefits}
+                  onChange={handleInputChange}
+                  error={errors.benefits}
+                />
+              </Grid>
+              <Grid item xs={12}>
+
+                <label>Description</label>
+                <TextField
+                  id="outlined-basic" variant="outlined"
+                  name="descriptionText"
+                  multiline
+                  minRows={6}
+                  maxRows={Infinity}
+                  value={values.description}
+                  onChange={handleInputChange}
+                  error={errors.description}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <label>Solution URLS</label>
+                <TextField
+                  id="outlined-basic" variant="outlined"
+                  name="solutionUrl"
+                  multiline
+                  minRows={6}
+                  maxRows={Infinity}
+                  value={values.solutionUrl}
+                  onChange={handleInputChange}
+                  error={errors.solutionUrl}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                  <Grid item xs={12} >
+                    <label>Required Documents</label>
+                  </Grid>
+                  <Grid item xs={12} className="Upload" mt={1.5} ml={3}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                      <Grid item xs={12}>
+                        <center>
+                          <input
+                            type="file"
+                            accept="/*"
+                            name="eventBanner"
+                            onChange={(e) => {
+                              changehandle(e);
+                            }}
+                            variant="contained"
+                            className="choosefile"
+                          />
+                        </center>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <center>
+                          <Button className="buttonstyle"
+                            variant="outlined"
+                            onClick={(e) => handleUpload(e)}
+                            disabled={uploadStatus}
+                          >
+                            Upload
+                      </Button>
+                        </center>
+                      </Grid>
+                      <Grid item xs={12}>
+                        {urlvalue.map((urls, idxurl) => {
+                          return <li className="urlName" key={idxurl}>{urls}</li>;
+                        })}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12}>
+                <label>Submitters</label>
+                <Box component="div" sx={{ p: 2, border: '1px solid grey', width: '35%', mt: .5 }} className="userDetails">
+                  <Autocomplete
+                    multiple
+                    id="submitterName" variant="outlined"
+                    getOptionLabel={(evenleadlist) => `${evenleadlist.firstName} ${evenleadlist.lastName}`}
+                    options={evenleadlist}
+                    filterSelectedOptions
+                    isOptionEqualToValue={(option, value) =>
+                      option.firstName === value.firstName
+                    }
+                    noOptionsText={"Nothing To Show"}
+                    renderOption={(props, evenleadlist) => (
+                      <Box component="li" {...props} >
+                        {evenleadlist.firstName} {evenleadlist.lastName}
+                      </Box>
+                    )}
+                    onChange={onInputUserChange}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        onChange={handleLeadName}
+                        label=""
+                        placeholder="Submitters"
+                      />
+                    )}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={4}>
+                <label>Set Privacy</label>
+                <Select
+                  placeholder="Select Privacy"
+                  name="privacy"
+                  value={privacy}
+                  options={privacyOptions}
+                  onChange={handlePrivacyhange}
+                  getOptionLabel={privacyDetails => privacyDetails.label}
+                  getOptionValue={privacyDetails => privacyDetails.value}
+                />
+              </Grid>
+              <br></br>
+              <br></br>
+
+              <Grid item xs={12}>
+                <center>
+                  <input className="buttonstyle" variant="contained" type="submit" value="SUBMIT IDEA" />
+                </center>
+              </Grid>
+              <div>{JSON.stringify()}</div>
+            </Grid>
+          </Box>
+        </form>
+      )}
+    </>
+  );
+}
+
