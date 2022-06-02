@@ -8,3 +8,10 @@ https://personal-ewbolbyg.outsystemscloud.com/API/rest/ClientAPI/GetAllClients
 
 https://personal-ewbolbyg.outsystemscloud.com/API/rest/ClientAPI/CreateClients
 
+
+
+Master user name: postgres
+Master pwd: OutSystemsPOC123
+DB name: outsystempoc
+Endpoint (Host): outsystempocdbinstance3.cdxjl9utby8r.ap-south-1.rds.amazonaws.com
+Port: 5432
